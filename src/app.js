@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 
 import Stops from "./stops";
 
+// Just locally for simplicity, can be fetch from endpoint
 let stops = [
   { id: 1, title: "Stop 1", time: "00:00" },
   { id: 2, title: "Stop 2", time: "00:00" },
@@ -17,7 +18,10 @@ let stops = [
 ];
 
 export default function App() {
+  // Keeping the result at this level just as an example. Can be retrived in context or at any other level
+  // Changes can be detexcted on the list, or through the SaveStopList prop on the Stops component to trigger autosave
   const [items, setItems] = useState([]);
+  // Just for testing, simulating simultaneous editing of result at another level. This can be changes introduced when getting the result from the backend
   useEffect(() => {
     setInterval(() => {
       setItems((prev) => {
@@ -46,6 +50,7 @@ export default function App() {
       </Row>
       <Row>
         <Col>
+          {/* Just displaying a live result of the list. Just for test */}
           AutoSaveResult:
           <br />
           {items.map((item) => (
