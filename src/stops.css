@@ -1,5 +1,4 @@
 .ListItemControl {
-  border: 1px solid red;
-  background-color: lightgray;
+  border-bottom: 1px solid lightgray;
   margin: 10px;
 }

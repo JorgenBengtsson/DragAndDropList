@@ -1,44 +1,62 @@
 import "./stops.css";
 
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Form, Row } from "react-bootstrap";
 import { DragDropContainer, DropTarget } from "react-drag-drop-container";
 import React, { useEffect, useState } from "react";
 import { sortableContainer, sortableElement } from "react-sortable-hoc";
 
+import { Multiselect } from "multiselect-react-dropdown";
 import arrayMove from "array-move";
 
 // Component to display the resulting control when an item is dragged to the list
 const Control = ({ value, onChange }) => {
-  const [title, setTitle] = useState(value.title);
   const [time, setTime] = useState(value.time);
+  const [days, setDays] = useState(value.days);
+  const [options, setOptions] = useState([
+    { name: "Måndag", id: 1 },
+    { name: "Tisdag", id: 2 },
+    { name: "Onsdag", id: 3 },
+    { name: "Torsdag", id: 4 },
+    { name: "Fredag", id: 5 },
+    { name: "Lördag", id: 6 },
+    { name: "Söndag", id: 7 },
+  ]);
   // It keeps track of it's own changes and report them
   useEffect(() => {
-    onChange({ id: value.id, title, time });
-  }, [title, time]);
-  // Keeps track of changes to its own props
-  useEffect(() => {
-    setTitle(value.title);
-  }, [value.title]);
+    console.log("Control - onChange", value.id, value.title, time, days);
+    onChange({ id: value.id, title: value.title, time: time, days: days });
+  }, [time, days]);
   useEffect(() => {
     setTime(value.time);
   }, [value.time]);
   return (
     <Container>
       <Row>
-        <Col sm={2}>Stop</Col>
         <Col>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+          <Multiselect
+            options={options}
+            selectedValues={days}
+            onSelect={(selectedList, selectedItem) => {
+              setDays(selectedList);
+            }}
+            onRemove={(selectedList, removedItem) => {
+              setDays(selectedList);
+            }}
+            displayValue="name"
+            showArrow={true}
+            showCheckbox={true}
+            hidePlaceholder={true}
           />
         </Col>
-      </Row>
-      <Row>
-        <Col sm={2}>Time</Col>
-        <Col>
-          <input type="text" value={time} onChange={(e) => setTime(e.value)} />
+        <Col sm="auto">
+          <input
+            type="text"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+            style={{ width: "80px" }}
+          />
         </Col>
+        <Col sm="auto">{value.title}</Col>
       </Row>
     </Container>
   );
@@ -61,12 +79,14 @@ export default function Stops({ stopsList, items, saveStopList }) {
     saveStopList(arrayMove(items, oldIndex, newIndex));
   };
   // Function to update the information in a singel controller in the result list
-  const updateItem = ({ id, title, time }) => {
+  const updateItem = ({ id, title, time, days }) => {
     let newArray = [...items];
     newArray.forEach((element) => {
       if (element.id === id) {
+        console.log(id, title, time, days);
         element.title = title;
         element.time = time;
+        element.days = days;
       }
     });
     saveStopList(newArray);
@@ -100,7 +120,7 @@ export default function Stops({ stopsList, items, saveStopList }) {
     <Container>
       <Row>
         {/* Column with the result list where items is dragged to */}
-        <Col>
+        <Col sm={10}>
           <DropTarget
             targetKey="stops"
             onHit={(item) => {

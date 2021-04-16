@@ -20,23 +20,17 @@ let stops = [
 export default function App() {
   // Keeping the result at this level just as an example. Can be retrived in context or at any other level
   // Changes can be detexcted on the list, or through the SaveStopList prop on the Stops component to trigger autosave
-  const [items, setItems] = useState([]);
-  // Just for testing, simulating simultaneous editing of result at another level. This can be changes introduced when getting the result from the backend
-  useEffect(() => {
-    setInterval(() => {
-      setItems((prev) => {
-        if (prev.length > 0) {
-          let itemsArray = [...prev];
-          let d = new Date();
-          itemsArray[0].title = d.toString();
-          console.log(itemsArray);
-          return itemsArray;
-        } else {
-          return [];
-        }
-      });
-    }, 3000);
-  }, []);
+  const [items, setItems] = useState([
+    {
+      id: 0,
+      title: "Stop 0",
+      time: "09:31",
+      days: [
+        { name: "Tisdag", id: 2 },
+        { name: "Torsdag", id: 4 },
+      ],
+    },
+  ]);
   return (
     <Container>
       <Row>
@@ -55,7 +49,8 @@ export default function App() {
           <br />
           {items.map((item) => (
             <div key={item.id}>
-              {item.id} - {item.title} [{item.time}]
+              {item.id} - {item.title} [{item.time}] (
+              {item.days ? item.days.map((day) => day.name + " ") : null})
             </div>
           ))}
         </Col>
